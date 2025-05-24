@@ -296,10 +296,10 @@
         "id": "0b123101bc3afff5",
         "type": "comment",
         "z": "c7be52e4124de54c",
-        "name": "komen",
-        "info": "# halo",
-        "x": 410,
-        "y": 140,
+        "name": "Cara gara node red bisa di simpan di git",
+        "info": "### aktifkan project\n - pergi ke dimana docker volume nodered berada, pada saat pembuatan ini docker volumenya adalah \"nodered_data\"\n - masuk ke settings.js, search  \"projects\" set enable = true\n - run \"docker compose down\"\n - run \"docker compose up -d\"\n - selanjutnya reload node red, dan project siap di create\n",
+        "x": 230,
+        "y": 100,
         "wires": []
     },
     {
