@@ -104,12 +104,11 @@
         "env": []
     },
     {
-        "id": "4a8be53b2d1893fb",
+        "id": "a1",
         "type": "tab",
-        "label": "Flow 2",
+        "label": "Modbus Read Write Simulasi",
         "disabled": false,
-        "info": "",
-        "env": []
+        "info": ""
     },
     {
         "id": "f425b6af91e21455",
@@ -273,6 +272,66 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
+    },
+    {
+        "id": "f64d49021fbd92ad",
+        "type": "modbus-client",
+        "name": "",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "127.0.0.1",
+        "tcpPort": "10502",
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": 9600,
+        "serialDatabits": 8,
+        "serialStopbits": 1,
+        "serialParity": "none",
+        "serialConnectionDelay": 100,
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "modbusClient",
+        "type": "modbus-client",
+        "name": "Localhost Client",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "127.0.0.1",
+        "tcpPort": "10502",
+        "tcpType": "DEFAULT",
+        "serialPort": "",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": "9600",
+        "serialDatabits": 8,
+        "serialStopbits": 1,
+        "serialParity": "none",
+        "serialConnectionDelay": "100",
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": true,
+        "showWarnings": true,
+        "showLogs": false
     },
     {
         "id": "75a301423a10d61b",
@@ -1325,6 +1384,213 @@
         "links": [],
         "x": 595,
         "y": 420,
+        "wires": []
+    },
+    {
+        "id": "modbusServer",
+        "type": "modbus-server",
+        "z": "a1",
+        "name": "Modbus TCP Server",
+        "logEnabled": true,
+        "hostname": "0.0.0.0",
+        "serverPort": 10502,
+        "responseDelay": 100,
+        "delayUnit": "ms",
+        "coilsBufferSize": 100,
+        "holdingBufferSize": 100,
+        "inputBufferSize": 100,
+        "discreteBufferSize": 100,
+        "showErrors": true,
+        "showStatusActivities": true,
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [],
+            [],
+            [],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "injectWrite",
+        "type": "inject",
+        "z": "a1",
+        "name": "Trigger Write",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 140,
+        "wires": [
+            [
+                "functionWrite"
+            ]
+        ]
+    },
+    {
+        "id": "functionWrite",
+        "type": "function",
+        "z": "a1",
+        "name": "Set Write Payload",
+        "func": "msg.payload = {\n    value: [321],\n    fc: 16,\n    unitid: 1,\n    address: 0,\n    quantity: 1\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 140,
+        "wires": [
+            [
+                "modbusWrite"
+            ]
+        ]
+    },
+    {
+        "id": "modbusWrite",
+        "type": "modbus-flex-write",
+        "z": "a1",
+        "name": "Write Register",
+        "showStatusActivities": true,
+        "showErrors": true,
+        "showWarnings": true,
+        "server": "modbusClient",
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 540,
+        "y": 140,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "injectRead",
+        "type": "inject",
+        "z": "a1",
+        "name": "Trigger Read",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"fc\":3,\"unitid\":1,\"address\":0,\"quantity\":1}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 240,
+        "wires": [
+            [
+                "modbusRead"
+            ]
+        ]
+    },
+    {
+        "id": "modbusRead",
+        "type": "modbus-flex-getter",
+        "z": "a1",
+        "name": "Read Register",
+        "showStatusActivities": true,
+        "showErrors": true,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "server": "modbusClient",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 320,
+        "y": 240,
+        "wires": [
+            [
+                "debugRead"
+            ],
+            [
+                "84de8a21675e4db5"
+            ]
+        ]
+    },
+    {
+        "id": "debugRead",
+        "type": "debug",
+        "z": "a1",
+        "name": "Data Response Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "7049da25df721832",
+        "type": "comment",
+        "z": "a1",
+        "name": "Untuk komunikasi Modbus Read & Write agar sukses, ada 4 parameter utama yang harus sama (match) antara pemanggil (Modbus Client) dan penyedia (Modbus Server)",
+        "info": "**Untuk komunikasi Modbus Read & Write agar sukses, ada 4 parameter utama yang harus sama (match) antara pemanggil (Modbus Client) dan penyedia (Modbus Server):**\n\n---\n\n- unitid (Unit ID)\n  - Ini adalah alamat unik slave Modbus di jaringan.\n  - Biasanya 1 kalau hanya satu perangkat.\n  - Wajib sama antara pembaca (reader) dan penulis (writer).\n\n---\n\n- address (Register Address)\n  - Lokasi register yang akan dibaca/ditulis.\n  - Contoh: address: 0 artinya register pertama.\n  - Harus konsisten, misalnya kamu menulis ke address 0, maka baca juga dari address 0.\n---\n\n- fc (Function Code)\n  - Menentukan jenis operasi:\n    - 3 → Read Holding Register\n    - 4 → Read Input Register\n    - 6 → Write Single Register\n    - 16 → Write Multiple Registers\n  - Pastikan kamu membaca dengan fc yang sesuai dengan jenis register yang kamu tulis.\n---\n\n- quantity (Jumlah Register)\n  - Banyaknya register yang ingin dibaca atau ditulis.\n  - Harus sesuai agar tidak terjadi error \"Illegal data address\" atau baca data kosong.\n---\n\n- Contoh Kompatibel:\n  - Kamu menulis data:\n    - `msg.payload = {\n      value: [321],\n      fc: 16,\n      unitid: 1,\n      address: 0,\n      quantity: 1\n    };`\n  - Kamu membaca data:\n    - `msg.payload = {\n      fc: 3,\n      unitid: 1,\n      address: 0,\n      quantity: 1\n    };`\n\n  - Keduanya akan berhasil, karena:\n    - Sama-sama unitid: 1\n    - Sama-sama address: 0\n    - Sama-sama quantity: 1\n    - Register yang ditulis adalah holding register (fc: 16), dan dibaca dengan fc: 3 (baca holding register)\n    ---\n    ",
+        "x": 600,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "e7315a21d4323fc2",
+        "type": "comment",
+        "z": "a1",
+        "name": "List FC Modbus: Write + Read yang Kompatibel",
+        "info": "## 📘 List FC Modbus: Write + Read yang Kompatibel\n\n### 🔹 FC 5 – Write Single Coil\n- 🔧 Menulis ON/OFF (`1/0`) ke satu *coil* (bit output digital).\n- 🧩 **Kompatibel dengan:** `FC 1 – Read Coils`\n- 📌 Biasanya untuk mengontrol relay, lampu, motor, dll.\n\n---\n\n### 🔹 FC 6 – Write Single Holding Register\n- 🔧 Menulis nilai 16-bit ke satu *holding register*.\n- 🧩 **Kompatibel dengan:** `FC 3 – Read Holding Registers`\n- 📌 Cocok untuk pengaturan seperti setpoint suhu, kecepatan, dll.\n\n---\n\n### 🔹 FC 15 – Write Multiple Coils\n- 🔧 Menulis banyak *coils* sekaligus (bit-bit ON/OFF).\n- 🧩 **Kompatibel dengan:** `FC 1 – Read Coils`\n- 📌 Cocok untuk kontrol banyak output digital sekaligus.\n\n---\n\n### 🔹 FC 16 – Write Multiple Holding Registers\n- 🔧 Menulis beberapa *holding register* (16-bit) sekaligus.\n- 🧩 **Kompatibel dengan:** `FC 3 – Read Holding Registers`\n- 📌 Umumnya digunakan untuk mengirim parameter array atau data sensor.\n\n---\n\n### 💡 Catatan\n- **Holding Register**: Lokasi penyimpanan data analog atau konfigurasi yang dapat dibaca dan ditulis.\n- **Coil**: Bit digital (ON/OFF).\n- **FC 2 – Read Discrete Inputs** dan **FC 4 – Read Input Registers** hanya mendukung operasi **read-only**, dan tidak memiliki pasangan *write*.\n- Tidak semua perangkat Modbus mendukung semua FC — tergantung spesifikasi dari device slave/server yang digunakan.\n",
+        "x": 220,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "84de8a21675e4db5",
+        "type": "debug",
+        "z": "a1",
+        "name": "Error/Failed Message Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "f89f565f766a6179",
+        "type": "comment",
+        "z": "a1",
+        "name": "Modbus Flex Getter Outputs",
+        "info": "## Modbus Flex Getter Outputs\n\n### ✅ Output 1: Data Response\nOutput utama dari node `modbus-flex-getter`.  \nDigunakan untuk mengambil data dari perangkat Modbus.\n\n**Contoh output:**\n```json\n{\n  \"payload\": [123, 456],\n  \"responseBuffer\": \"<Buffer>\",\n  ...\n}\n```\n\n### Penggunaan umum:\n- Menampilkan ke debug node\n- Menyimpan ke database\n- Pemicu logika atau proses lanjutan\n\n---\n### ❌ Output 2: Error / Failed Messages\n\nOutput ini hanya keluar jika terjadi **kesalahan komunikasi**, seperti:\n\n- Server tidak merespons\n- Alamat salah\n- Function Code tidak didukung\n- Timeout\n\n**Penggunaan umum:**\n\n- Logging error\n- Notifikasi kegagalan koneksi\n",
+        "x": 880,
+        "y": 240,
         "wires": []
     }
 ]
